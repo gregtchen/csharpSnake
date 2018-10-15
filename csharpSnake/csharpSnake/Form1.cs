@@ -24,6 +24,7 @@ namespace csharpSnake
         Bitmap bmp;
         Snake head;
         List<Snake> body;
+        List<Snake> oldBody;
         Random rnd;
         Food food;
 
@@ -51,27 +52,30 @@ namespace csharpSnake
         private void timer1_Tick(object sender, EventArgs e)
         {
             gfx.Clear(BackColor);
-            for (int i = 0; i < body.Count; i++)
-            {
-                if (i == 0)
-                {
-                    body[i].move(ClientSize.Width, ClientSize.Height);
-                    body[i].draw(gfx);
-                }
-                else
-                {
 
-                    body[i].move(ClientSize.Width, ClientSize.Height);
-                    body[i].draw(gfx);
-                    body[i].direction = body[i - 1].direction;
-                }
+            //move segment in spot of previous
+            body[0].move(ClientSize.Width, ClientSize.Height);
+            body[0].draw(gfx);
+            if (outOfBounds(body[0]))
+            {
+                gameOver();
             }
+            for(int i = body.Count-1; i > 0; i--)
+            {
+                //body[i].moveTo(body[i - 1].X, body[i - 1].Y);
+                body[i].move(ClientSize.Width, ClientSize.Height);
+                body[i].draw(gfx);
+                body[i].direction = body[i - 1].direction;
+            }
+
+            
             food.draw(gfx);
 
             for (int i = 0; i < body.Count; i++)
             {
                 if (food.Hitbox.IntersectsWith(body[i].Hitbox))
                 {
+                    //add section to back of the snake keeping the direction of last body part
                     Snake temp = body[body.Count - 1];
                     if (temp.direction == (int)Direction.Up)
                     {
@@ -93,6 +97,7 @@ namespace csharpSnake
                 }
             }
 
+            oldBody = body;
             pictureBox1.Image = bmp;
         }
 
@@ -116,8 +121,17 @@ namespace csharpSnake
             }
         }
 
+        public Boolean outOfBounds(Snake snake)
+        {
+            if(snake.X < 0 || snake.X + snake.Size > ClientSize.Width || snake.Y < 0 || snake.Y+ snake.Size > ClientSize.Height)
+            {
+                return true;
+            }
+            return false;
+        }
         public void gameOver()
         {
+            timer1.Stop();
             MessageBox.Show("Game Over!");
         }
 

@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace csharpSnake
 {
-    class Snake
+    public class Snake
     {
         int x;
         public int X
@@ -26,6 +26,13 @@ namespace csharpSnake
             }
         }
         int size;
+        public int Size
+        {
+            get
+            {
+                return size;
+            }
+        }
         int xspeed;
         public int Xspeed
         {
@@ -73,6 +80,12 @@ namespace csharpSnake
         public void erase(Graphics gfx, Color backcolor)
         {
             gfx.FillRectangle(new SolidBrush(backcolor), x, y, size, size);
+        }
+
+        public void moveTo(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
         }
         public void move(int width, int height)
         {
